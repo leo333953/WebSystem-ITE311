@@ -24,12 +24,12 @@ class Database extends Config
      *
      * @var array<string, mixed>
      */
-    public array $default = [
+    public  $default = [
         'DSN'          => '',
         'hostname'     => 'localhost',
-        'username'     => '',
+        'username'     => 'root',
         'password'     => '',
-        'database'     => '',
+        'database'     => 'lms_alberca',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
