@@ -9,50 +9,41 @@ class CreateUsersTable extends Migration
     public function up()
     {
         $this->forge->addField([
-            'id'          => [
+            'id' => [
                 'type'           => 'INT',
                 'constraint'     => 11,
                 'unsigned'       => true,
-                'auto_increment' => true
+                'auto_increment' => true,
             ],
-            'role'        => [
+            'name' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'email' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'unique'     => true,
+            ],
+            'password' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+            ],
+            'role' => [
                 'type'       => 'ENUM',
-                'constraint' => ['student', 'instructor', 'admin'],
-                'default'    => 'student'
+                'constraint' => ['admin', 'instructor', 'student'],
+                'default'    => 'student',
             ],
-            'first_name'  => [
-                'type'       => 'VARCHAR',
-                'constraint' => 50
-            ],
-            'last_name'   => [
-                'type'       => 'VARCHAR',
-                'constraint' => 50
-            ],
-            'email'       => [
-                'type'       => 'VARCHAR',
-                'constraint' => 100
-            ],
-            'password'    => [
-                'type'       => 'VARCHAR',
-                'constraint' => 255
-            ],
-            'created_at'  => [
+            'created_at' => [
                 'type' => 'DATETIME',
-                'null' => true
+                'null' => true,
             ],
-            'updated_at'  => [
+            'updated_at' => [
                 'type' => 'DATETIME',
-                'null' => true
+                'null' => true,
             ],
         ]);
 
-        // Primary Key
         $this->forge->addKey('id', true);
-
-        // Unique Email
-        $this->forge->addUniqueKey('email');
-
-        // Create the table
         $this->forge->createTable('users');
     }
 
