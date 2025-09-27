@@ -1,8 +1,6 @@
 <?php
 
-
 use CodeIgniter\Router\RouteCollection;
-
 
 /**
  * @var RouteCollection $routes
@@ -20,6 +18,17 @@ $routes->post('/login', 'Auth::login');
 $routes->get('/logout', 'Auth::logout');
 $routes->get('/dashboard', 'Auth::dashboard');
 
-$routes->get('admin/dashboard', 'AdminDashboard::index');
-$routes->get('teacher/dashboard', 'TeacherDashboard::index');
-$routes->get('student/dashboard', 'StudentDashboard::index');
+// Temporary routes for Step 2 testing - Add these lines
+$routes->get('/admin/dashboard', function() {
+    return "Step 2 Working! Admin Dashboard - Role: " . session()->get('role');
+});
+
+$routes->get('/teacher/dashboard', function() {
+    return "Step 2 Working! Teacher Dashboard - Role: " . session()->get('role');
+});
+
+$routes->get('/student/dashboard', function() {
+    return "Step 2 Working! Student Dashboard - Role: " . session()->get('role');
+});
+
+// Keep your existing routes below these
