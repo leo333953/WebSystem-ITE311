@@ -19,7 +19,7 @@ class Auth extends BaseController
     {   
         helper(['form']);
         
-        if ($this->isLoggedIn()) {
+        if ($this->session->get('isLoggedIn') == true) {
             return redirect()->to(base_url('dashboard'));
         }
 
@@ -89,7 +89,7 @@ public function login()
 {
     helper(['form']);
 
-    if ($this->isLoggedIn()) {
+    if ($this->session->get('isLoggedIn') == true) {
         return redirect()->to(base_url('dashboard'));
     }
 
@@ -129,21 +129,9 @@ public function login()
 
                 $this->session->set($sessionData);
                 $this->session->setFlashdata('success', 'Welcome back, ' . $user['name'] . '!');
-                
-                // Role-based redirection
-                switch ($user['role']) {
-                    case 'admin':
-                        return redirect()->to('/admin/dashboard');
-                    case 'teacher':
-                        return redirect()->to('/teacher/dashboard');
-                    case 'student':
-                        return redirect()->to('/student/dashboard');
-                    default:
-                        return redirect()->to('/dashboard');
-                }
-            } else {
-                $this->session->setFlashdata('error', 'Invalid email or password.');
-            }
+                 
+            } 
+            return redirect()->to('dashboard');
         } else {
             $this->session->setFlashdata('errors', $this->validation->getErrors());
         }
@@ -171,39 +159,54 @@ public function login()
 
     public function dashboard()
     {
+        if($this->session->get('isLoggedIn') == true){
+            
+            $data = [
+                'userID' => $this->session->get('userID'), 
+                'name'   => $this->session->get('name'),
+                'email'  => $this->session->get('email'),
+                'role'   => $this->session->get('role')
+            ];
 
-        if (!$this->isLoggedIn()) {
-            $this->session->setFlashdata('error', 'Please login to access the dashboard.');
-            return redirect()->to(base_url('login'));
-        }
+            return view('templates/header', $data) . view('auth/dashboard', $data);
 
-        $userData = [
-            'userID' => $this->session->get('userID'), 
-            'name'   => $this->session->get('name'),
-            'email'  => $this->session->get('email'),
-            'role'   => $this->session->get('role')
-        ];
+        // if (!$this->isLoggedIn()) {
+        //     $this->session->setFlashdata('error', 'Please login to access the dashboard.');
+        //     return redirect()->to(base_url('login'));
+        // }
+
+        // $userData = [
+        //     'userID' => $this->session->get('userID'), 
+        //     'name'   => $this->session->get('name'),
+        //     'email'  => $this->session->get('email'),
+        //     'role'   => $this->session->get('role')
+        // ];
         
-        $data = [
-            'user' => $userData,             
-            'title' => 'Dashboard'
-        ];
+        // $data = [
+        //     'user' => $userData,             
+        //     'title' => 'Dashboard'
+        // ];
 
-        return view('auth/dashboard', $data);
+        // return view('auth/dashboard', $data);
+    }else{
+        $this->session->setFlashdata('fail', 'wlay session.');
+        return redirect()->to(base_url('login'));
     }
 
-    private function isLoggedIn(): bool
-    {
-        return $this->session->get('isLoggedIn') === true;
-    }
 
-    public function getCurrentUser(): array
-    {
-        return [
-            'userID' => $this->session->get('userID'),
-            'name'   => $this->session->get('name'),
-            'email'  => $this->session->get('email'),
-            'role'   => $this->session->get('role')
-        ];
-    }
+    // private function isLoggedIn(): bool
+    // {
+    //     return $this->session->get('isLoggedIn') === true;
+    // }
+
+    // public function getCurrentUser(): array
+    // {
+    //     return [
+    //         'userID' => $this->session->get('userID'),
+    //         'name'   => $this->session->get('name'),
+    //         'email'  => $this->session->get('email'),
+    //         'role'   => $this->session->get('role')
+    //     ];
+    // }
+}
 }
