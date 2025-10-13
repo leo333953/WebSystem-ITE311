@@ -2,31 +2,34 @@
 
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
+use App\Models\EnrollmentModel;
+
 class Auth extends BaseController
 {
     protected $session;
     protected $validation;
     protected $db;
+    protected $enrollmentModel;
 
     public function __construct()
     {
         $this->session = \Config\Services::session();
         $this->validation = \Config\Services::validation();
         $this->db = \Config\Database::connect();
+        $this->enrollmentModel = new EnrollmentModel();
     }
 
+    // REGISTER
     public function register()
-    {   
+    {
         helper(['form']);
-        
-        if ($this->session->get('isLoggedIn') == true) {
+
+        if ($this->session->get('isLoggedIn')) {
             return redirect()->to(base_url('dashboard'));
         }
 
         if ($this->request->getMethod() === 'POST') {
-
-            helper(['form']);
-
             $rules = [
                 'name'             => 'required|min_length[3]|max_length[100]',
                 'email'            => 'required|valid_email|is_unique[users.email]',
@@ -34,45 +37,21 @@ class Auth extends BaseController
                 'password_confirm' => 'required|matches[password]'
             ];
 
-            $messages = [
-                'name' => [
-                    'required'   => 'Name is required.',
-                    'min_length' => 'Name must be at least 3 characters long.',
-                    'max_length' => 'Name cannot exceed 100 characters.'
-                ],
-                'email' => [
-                    'required'    => 'Email is required.',
-                    'valid_email' => 'Please enter a valid email address.',
-                    'is_unique'   => 'This email is already registered.'
-                ],
-                'password' => [
-                    'required'   => 'Password is required.',
-                    'min_length' => 'Password must be at least 6 characters long.'
-                ],
-                'password_confirm' => [
-                    'required' => 'Password confirmation is required.',
-                    'matches'  => 'Password confirmation does not match.'
-                ]
-            ];
-
-            // Step 2c: Check if all validation rules pass
-            if ($this->validate($rules, $messages)) {
-                
+            if ($this->validate($rules)) {
                 $hashedPassword = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
 
                 $userData = [
                     'name'       => $this->request->getPost('name'),
                     'email'      => $this->request->getPost('email'),
                     'password'   => $hashedPassword,
-                    'role'       => 'user',
+                    'role'       => 'student',
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
 
                 $builder = $this->db->table('users');
-                
                 if ($builder->insert($userData)) {
-                    $this->session->setFlashdata('success', 'Registration successful! Please login with your credentials.');
+                    $this->session->setFlashdata('success', 'Registration successful! Please login.');
                     return redirect()->to(base_url('login'));
                 } else {
                     $this->session->setFlashdata('error', 'Registration failed. Please try again.');
@@ -85,128 +64,96 @@ class Auth extends BaseController
         return view('auth/register');
     }
 
-public function login()
-{
-    helper(['form']);
+    // LOGIN
+    public function login()
+    {
+        helper(['form']);
 
-    if ($this->session->get('isLoggedIn') == true) {
-        return redirect()->to(base_url('dashboard'));
-    }
-
-    if ($this->request->getMethod() === 'POST') {
-        $rules = [
-            'email'    => 'required|valid_email',
-            'password' => 'required'
-        ];
-
-        $messages = [
-            'email' => [
-                'required'    => 'Email is required.', 
-                'valid_email' => 'Please enter a valid email address.',
-            ],
-            'password' => [
-                'required' => 'Password is required.' 
-            ]
-        ];
-
-        if ($this->validate($rules, $messages)) {
-            $email = $this->request->getPost('email');
-            $password = $this->request->getPost('password');
-
-            $builder = $this->db->table('users');
-            $user = $builder->where('email', $email)
-                           ->get()
-                           ->getRowArray();
-
-            if ($user && password_verify($password, $user['password'])) {
-                $sessionData = [
-                    'userID'     => $user['id'],
-                    'name'       => $user['name'],
-                    'email'      => $user['email'],
-                    'role'       => $user['role'],
-                    'isLoggedIn' => true
-                ];
-
-                $this->session->set($sessionData);
-                $this->session->setFlashdata('success', 'Welcome back, ' . $user['name'] . '!');
-                 
-            } 
-            return redirect()->to('dashboard');
-        } else {
-            $this->session->setFlashdata('errors', $this->validation->getErrors());
+        if ($this->session->get('isLoggedIn')) {
+            return redirect()->to(base_url('dashboard'));
         }
-    }
 
-    return view('auth/login');
-}
-
-
-
-
-
-
-
-
-    public function logout()
-    {
-
-        $this->session->destroy();
-        
-        $this->session->setFlashdata('success', 'You have been logged out successfully.');
-        
-        return redirect()->to(base_url('login'));
-    }
-
-    public function dashboard()
-    {
-        if($this->session->get('isLoggedIn') == true){
-            
-            $data = [
-                'userID' => $this->session->get('userID'), 
-                'name'   => $this->session->get('name'),
-                'email'  => $this->session->get('email'),
-                'role'   => $this->session->get('role')
+        if ($this->request->getMethod() === 'POST') {
+            $rules = [
+                'email'    => 'required|valid_email',
+                'password' => 'required'
             ];
 
-            return view('templates/header', $data) . view('auth/dashboard', $data);
+            if ($this->validate($rules)) {
+                $email = $this->request->getPost('email');
+                $password = $this->request->getPost('password');
 
-        // if (!$this->isLoggedIn()) {
-        //     $this->session->setFlashdata('error', 'Please login to access the dashboard.');
-        //     return redirect()->to(base_url('login'));
-        // }
+                $builder = $this->db->table('users');
+                $user = $builder->where('email', $email)->get()->getRowArray();
 
-        // $userData = [
-        //     'userID' => $this->session->get('userID'), 
-        //     'name'   => $this->session->get('name'),
-        //     'email'  => $this->session->get('email'),
-        //     'role'   => $this->session->get('role')
-        // ];
-        
-        // $data = [
-        //     'user' => $userData,             
-        //     'title' => 'Dashboard'
-        // ];
+                if ($user && password_verify($password, $user['password'])) {
+                    $sessionData = [
+                        'user_id'    => $user['id'],
+                        'name'       => $user['name'],
+                        'email'      => $user['email'],
+                        'role'       => $user['role'] ?? 'student',
+                        'isLoggedIn' => true
+                    ];
 
-        // return view('auth/dashboard', $data);
-    }else{
-        $this->session->setFlashdata('fail', 'wlay session.');
+                    $this->session->set($sessionData);
+                    $this->session->setFlashdata('success', 'Welcome back, ' . $user['name'] . '!');
+
+                    return redirect()->to(base_url('dashboard'));
+                } else {
+                    $this->session->setFlashdata('error', 'Invalid email or password.');
+                    return redirect()->to(base_url('login'));
+                }
+            } else {
+                $this->session->setFlashdata('errors', $this->validation->getErrors());
+            }
+        }
+
+        return view('auth/login');
+    }
+
+    // LOGOUT
+    public function logout()
+    {
+        $this->session->destroy();
         return redirect()->to(base_url('login'));
     }
 
+    // DASHBOARD
+    public function dashboard()
+    {
+        if (!$this->session->get('isLoggedIn')) {
+            return redirect()->to(base_url('login'))->with('error', 'Please log in first.');
+        }
 
-    // private function isLoggedIn(): bool
-    // {
-    //     return $this->session->get('isLoggedIn') === true;
-    // }
+        $user_id = $this->session->get('user_id');
+        $user_name = $this->session->get('name');
+        $user_role = $this->session->get('role');
 
-    // public function getCurrentUser(): array
-    // {
-    //     return [
-    //         'userID' => $this->session->get('userID'),
-    //         'name'   => $this->session->get('name'),
-    //         'email'  => $this->session->get('email'),
-    //         'role'   => $this->session->get('role')
-    //     ];
-    // }
-}
+        // Fetch all courses
+        $courses = $this->db->table('courses')
+            ->select('id, title, description')
+            ->orderBy('title', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        // Fetch student enrolled courses
+        $enrolledCourses = [];
+        if ($user_role === 'student') {
+            $enrolledCourses = $this->db->table('enrollments')
+                ->select('courses.id, courses.title, courses.description')
+                ->join('courses', 'enrollments.course_id = courses.id', 'left')
+                ->where('enrollments.user_id', $user_id)
+                ->get()
+                ->getResultArray();
+        }
+
+        $data = [
+            'user_name'       => $user_name,
+            'user_role'       => $user_role,
+            'courses'         => $courses,
+            'enrolledCourses' => $enrolledCourses
+        ];
+
+        return view('auth/dashboard', $data);
+    }
 }

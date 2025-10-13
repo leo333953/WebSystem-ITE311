@@ -28,9 +28,25 @@ class UserModel extends Model
 
     protected function hashPassword(array $data)
     {
-        if (isset($data['data']['password'])) {
+        if (isset($data['data']['password']) && !empty($data['data']['password'])) {
             $data['data']['password'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
         }
         return $data;
+    }
+
+    // Helper: get users by role
+    public function getUsersByRole(string $role)
+    {
+        return $this->where('role', $role)->findAll();
+    }
+
+    // Helper: verify login
+    public function verifyUser(string $email, string $password)
+    {
+        $user = $this->where('email', $email)->first();
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        return null;
     }
 }

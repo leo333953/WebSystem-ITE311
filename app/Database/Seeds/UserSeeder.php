@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
         $data = [
             [
                 'role'       => 'admin',
-                'name' => 'Admin',
+                'name'       => 'Admin',
                 'email'      => 'admin@example.com',
                 'password'   => password_hash('admin123', PASSWORD_DEFAULT),
                 'created_at' => Time::now(),
@@ -20,17 +20,34 @@ class UserSeeder extends Seeder
             ],
             [
                 'role'       => 'teacher',
-                'name' => 'John',
-                'email'      => 'teaher@example.com',
+                'name'       => 'John Doe',
+                'email'      => 'teacher@example.com',
                 'password'   => password_hash('teacher123', PASSWORD_DEFAULT),
                 'created_at' => Time::now(),
                 'updated_at' => Time::now()
             ],
             [
                 'role'       => 'student',
-                'name' => 'Jane',
+                'name'       => 'Jane Smith',
                 'email'      => 'student@example.com',
                 'password'   => password_hash('student123', PASSWORD_DEFAULT),
+                'created_at' => Time::now(),
+                'updated_at' => Time::now()
+            ],
+            // Optional: additional sample users
+            [
+                'role'       => 'teacher',
+                'name'       => 'Alice Brown',
+                'email'      => 'alice.teacher@example.com',
+                'password'   => password_hash('teacher456', PASSWORD_DEFAULT),
+                'created_at' => Time::now(),
+                'updated_at' => Time::now()
+            ],
+            [
+                'role'       => 'student',
+                'name'       => 'Bob Green',
+                'email'      => 'bob.student@example.com',
+                'password'   => password_hash('student456', PASSWORD_DEFAULT),
                 'created_at' => Time::now(),
                 'updated_at' => Time::now()
             ],
