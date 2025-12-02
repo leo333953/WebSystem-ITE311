@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\EnrollmentModel;
+use App\Models\MaterialModel;
 
 class Auth extends BaseController
 {
@@ -147,12 +148,26 @@ class Auth extends BaseController
                 ->getResultArray();
         }
 
+        $enrollmentModel = new EnrollmentModel();
+        $enrolledCourses = $enrollmentModel->getEnrollmentsByUser($user_id);
+
+        $materialsModel = new MaterialModel();
+
+        foreach ($enrolledCourses as &$course) {
+            $course['materials'] = $materialsModel->getMaterialsByCourse($course['id']);
+        }
+
+
+        $role = session()->get('role');
         $data = [
             'user_name'       => $user_name,
             'user_role'       => $user_role,
             'courses'         => $courses,
-            'enrolledCourses' => $enrolledCourses
+            'enrolledCourses' => $enrolledCourses,
+            'role' => $role
+            
         ];
+
 
         return view('auth/dashboard', $data);
     }

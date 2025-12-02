@@ -38,3 +38,26 @@ $routes->post('course/enroll', 'Course::enroll');
 // For displaying enrolled courses / success message
 $routes->get('course/enroll', 'Course::enrollPage');
 // Keep your existing routes below these
+
+//Love 7
+$routes->get('/admin/course/(:num)/upload', 'Materials::upload/$1');
+$routes->post('/admin/course/(:num)/upload', 'Materials::upload/$1');
+$routes->get('/materials/delete/(:num)', 'Materials::delete/$1');
+$routes->get('/materials/download/(:num)', 'Materials::download/$1');
+
+// Admin Routes
+$routes->get('/users', 'Users::index');
+$routes->get('/reports', 'Reports::index');
+$routes->get('/courses', 'Course::index');
+$routes->get('/settings', 'Settings::index');
+
+// Teacher Routes
+$routes->get('/courses/manage', 'Course::manage');
+$routes->get('/students', 'Students::index');
+$routes->get('/lessons', 'Lessons::index');
+$routes->get('/announcements', 'Announcements::index');
+
+// Student Routes
+$routes->get('/assignments', 'Assignments::index');
+$routes->get('/groups', 'Groups::index');
+$routes->get('/progress', 'Progress::index');

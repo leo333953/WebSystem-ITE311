@@ -22,4 +22,14 @@ class EnrollmentModel extends Model
                     ->where('course_id', $course_id)
                     ->countAllResults() > 0;
     }
+
+    public function getEnrollmentsByUser($user_id)
+    {
+        return $this->db->table('enrollments')
+            ->select('courses.id, courses.title, courses.description')
+            ->join('courses', 'courses.id = enrollments.course_id', 'left')
+            ->where('enrollments.user_id', $user_id)
+            ->get()
+            ->getResultArray();
+    }
 }

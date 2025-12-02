@@ -51,7 +51,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item me-3">
-                        <span class="text-white">Hello, <?= esc($user_name ?? 'Guest') ?></span>
+                        <span class="text-white">Hello, <?= esc($role) ?></span>
                     </li>
                     <li class="nav-item me-2">
                         <a href="#" class="btn btn-outline-light btn-sm"><i class="bi bi-bell"></i></a>

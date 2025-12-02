@@ -59,4 +59,25 @@ class Course extends BaseController
             ]);
         }
     }
+
+    public function getAllCourses()
+    {
+        $courseModel = new \App\Models\CourseModel();
+        $courses = $courseModel->findAll();
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data' => $courses
+        ]);
+    }
+
+    public function manage()
+    {
+        if(session()->get('isLoggedIn') !== true || session()->get('role') !== 'teacher') {
+            return redirect()->to('/login');
+        }
+
+        $role = session()->get('role');
+        return view('templates/header', ['role' => $role]) . view('teacher/manage_courses');
+    }
 }

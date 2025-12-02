@@ -15,24 +15,21 @@ class UserSeeder extends Seeder
                 'name'       => 'Admin',
                 'email'      => 'admin@example.com',
                 'password'   => password_hash('admin123', PASSWORD_DEFAULT),
-                'created_at' => Time::now(),
-                'updated_at' => Time::now()
+                'created_at' => Time::now()
             ],
             [
                 'role'       => 'teacher',
                 'name'       => 'John Doe',
                 'email'      => 'teacher@example.com',
                 'password'   => password_hash('teacher123', PASSWORD_DEFAULT),
-                'created_at' => Time::now(),
-                'updated_at' => Time::now()
+                'created_at' => Time::now()
             ],
             [
                 'role'       => 'student',
                 'name'       => 'Jane Smith',
                 'email'      => 'student@example.com',
                 'password'   => password_hash('student123', PASSWORD_DEFAULT),
-                'created_at' => Time::now(),
-                'updated_at' => Time::now()
+                'created_at' => Time::now()
             ],
             // Optional: additional sample users
             [
@@ -40,16 +37,14 @@ class UserSeeder extends Seeder
                 'name'       => 'Alice Brown',
                 'email'      => 'alice.teacher@example.com',
                 'password'   => password_hash('teacher456', PASSWORD_DEFAULT),
-                'created_at' => Time::now(),
-                'updated_at' => Time::now()
+                'created_at' => Time::now()
             ],
             [
                 'role'       => 'student',
                 'name'       => 'Bob Green',
                 'email'      => 'bob.student@example.com',
                 'password'   => password_hash('student456', PASSWORD_DEFAULT),
-                'created_at' => Time::now(),
-                'updated_at' => Time::now()
+                'created_at' => Time::now()
             ],
         ];
 

@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateUsersTable extends Migration
+class CreateMaterialsTable extends Migration
 {
     public function up()
     {
@@ -15,36 +15,32 @@ class CreateUsersTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'name' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 100,
+            'course_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
             ],
-            'email' => [
+            'file_name' => [
                 'type'       => 'VARCHAR',
-                'constraint' => 100,
-                'unique'     => true,
+                'constraint' => 150,
             ],
-            'password' => [
+            'file_path' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 255,
-            ],
-            'role' => [
-                'type'       => 'ENUM',
-                'constraint' => ['admin', 'teacher', 'student'],
-                'default'    => 'student',
             ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
-            ]
+            ],
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('users');
+        $this->forge->addForeignKey('course_id', 'courses', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->createTable('materials');
     }
 
     public function down()
     {
-        $this->forge->dropTable('users');
+        $this->forge->dropTable('materials');
     }
 }
