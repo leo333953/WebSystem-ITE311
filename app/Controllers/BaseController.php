@@ -41,7 +41,8 @@ abstract class BaseController extends Controller
      * Be sure to declare properties for any property fetch you initialized.
      * The creation of dynamic property is deprecated in PHP 8.2.
      */
-    // protected $session;
+    protected $session;
+    protected $notificationCount = 0;
 
     /**
      * @return void
@@ -53,6 +54,13 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
 
-        // E.g.: $this->session = service('session');
+        $this->session = session();
+
+        if($this->session->get('isLoggedIn')) {
+            $notificationModel = new \App\Models\NotificationModel();
+            $this->notificationCount = $notificationModel->getUnreadCount($this->session->get('userId'));
+        }else{
+            return redirect()->to('/login');
+        }
     }
 }
