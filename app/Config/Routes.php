@@ -40,10 +40,12 @@ $routes->get('course/enroll', 'Course::enrollPage');
 // Keep your existing routes below these
 
 //Love 7
-$routes->get('/admin/course/(:num)/upload', 'Materials::upload/$1');
-$routes->post('/admin/course/(:num)/upload', 'Materials::upload/$1');
+
 $routes->get('/materials/delete/(:num)', 'Materials::delete/$1');
 $routes->get('/materials/download/(:num)', 'Materials::download/$1');
+$routes->get('/admin/course/(:num)/upload', 'Materials::upload/$1');
+$routes->post('/admin/course/(:num)/upload', 'Materials::upload/$1');
+
 
 // Admin Routes
 $routes->get('/users', 'Users::index');
@@ -65,3 +67,7 @@ $routes->get('/progress', 'Progress::index');
 //Notification
 $routes->get('/notifications', 'Notifications::get');
 $routes->post('/notifications/mark-as-read/(:num)', 'Notifications::markAsRead/$1');
+
+//Lab Nien
+$routes->get('/courses/search', 'Course::search');
+$routes->post('/courses/search', 'Course::search');

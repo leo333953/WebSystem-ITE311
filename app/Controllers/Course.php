@@ -74,6 +74,21 @@ class Course extends BaseController
         }
     }
 
+    public function index()
+    {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/login');
+        }
+
+        $userId = session()->get('user_id');
+        $enrollmentModel = new EnrollmentModel();
+        $courses = $enrollmentModel->getEnrollmentsByUser($userId);
+        $role = session()->get('role');
+
+        return view('templates/header', ['role' => $role]) 
+             . view('courses/index', ['courses' => $courses]);
+    }
+
     public function getAllCourses()
     {
         $courseModel = new \App\Models\CourseModel();
@@ -93,5 +108,32 @@ class Course extends BaseController
 
         $role = session()->get('role');
         return view('templates/header', ['role' => $role]) . view('teacher/manage_courses');
+    }
+
+    public function search()
+    {
+        $userId = session()->get('user_id');
+        $searchTerm = $this->request->getGet('search_term');
+        
+        $db = \Config\Database::connect();
+        $builder = $db->table('enrollments');
+        $builder->select('courses.id, courses.title, courses.description');
+        $builder->join('courses', 'courses.id = enrollments.course_id', 'left');
+        $builder->where('enrollments.user_id', $userId);
+        
+        if (!empty($searchTerm)) {
+            $builder->groupStart();
+            $builder->like('courses.title', $searchTerm);
+            $builder->orLike('courses.description', $searchTerm);
+            $builder->groupEnd();
+        }
+        
+        $courses = $builder->get()->getResultArray();
+        
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON($courses);
+        }
+        
+        return view('courses/search_results', ['courses' => $courses, 'searchTerm' => $searchTerm]);
     }
 }
