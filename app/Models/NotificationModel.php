@@ -38,4 +38,15 @@ class NotificationModel extends Model
     {
         return $this->update($notificationId, ['is_read' => true]);
     }
+
+    public function createNotification($userId, $message)
+    {
+        $data = [
+            'user_id' => $userId,
+            'message' => $message,
+            'is_read' => false,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        return $this->insert($data);
+    }
 }

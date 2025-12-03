@@ -8,7 +8,7 @@ class Notifications extends BaseController
     public function get()
     {
         $notificationModel = new NotificationModel();
-        $userId = $this->session->get('userId');
+        $userId = session()->get('user_id');
 
         $notifications = $notificationModel->getNotificationsForUser($userId);
         $unreadCount = $notificationModel->getUnreadCount($userId);

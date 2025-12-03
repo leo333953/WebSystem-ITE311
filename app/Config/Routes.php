@@ -61,3 +61,7 @@ $routes->get('/announcements', 'Announcements::index');
 $routes->get('/assignments', 'Assignments::index');
 $routes->get('/groups', 'Groups::index');
 $routes->get('/progress', 'Progress::index');
+
+//Notification
+$routes->get('/notifications', 'Notifications::get');
+$routes->post('/notifications/mark-as-read/(:num)', 'Notifications::markAsRead/$1');
