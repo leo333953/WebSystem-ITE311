@@ -18,8 +18,7 @@ class UserModel extends Model
         'email',
         'password',
         'role',
-        'created_at',
-        'updated_at',
+        'created_at'
     ];
 
     // Automatically hash passwords

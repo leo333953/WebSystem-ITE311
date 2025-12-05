@@ -49,6 +49,10 @@ $routes->post('/admin/course/(:num)/upload', 'Materials::upload/$1');
 
 // Admin Routes
 $routes->get('/users', 'Users::index');
+$routes->post('/users/create', 'Users::create');
+$routes->post('/users/update/(:num)', 'Users::update/$1');
+$routes->post('/users/delete/(:num)', 'Users::delete/$1');
+$routes->get('/users/get/(:num)', 'Users::get/$1');
 $routes->get('/reports', 'Reports::index');
 $routes->get('/courses', 'Course::index');
 $routes->get('/settings', 'Settings::index');
